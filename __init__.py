@@ -57,8 +57,23 @@ class XHandler():
                     msg = self.commands.get()
 
                 if self.queue.qsize() > 0:
+
+                    self.lock_for_queue.acquire()
                     msg = self.queue.get()
+                    if msg.delay > 0:
+                        cur_time = time.time()
+                        # print('-'*10, cur_time, msg.posted_time + msg.delay)
+                        if msg.posted_time + msg.delay > cur_time:
+                            # print('delaying...')
+                            self.queue.put(msg)
+                            self.lock_for_queue.release()
+                            continue
+ 
+                    self.lock_for_queue.release()
                     self._execute_task(msg)
+
+                    
+
 
         if mode == self.MODE_MULTI_PROCESSING:
             # start a dispatcher 
@@ -98,6 +113,7 @@ class XHandler():
         msg.delay = delay
         msg.future_wait = future_wait
         msg.kwds=kwds
+        msg.posted_time = time.time()
 
         # self.queue.put(msg)
         # self.pool.apply_async(func, args)
@@ -144,6 +160,7 @@ class XHandler():
         msg.identifier = identifier
         msg.delay = delay
         msg.future_wait = future_wait
+        msg.posted_time = time.time()
 
         self._post(msg)
 

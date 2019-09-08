@@ -23,7 +23,7 @@ if __name__ == '__main__':
     handler = xhandler.getHandler()
     for i in range(10):
         handler.post(info, i, 2, future_wait=True, identifier='test'+str(i))
-
+    handler.post(info, 5, 3, delay=10)
     # print('Waiting for joining...', os.getpid())
     # time.sleep(3)
     # handler.terminate()
