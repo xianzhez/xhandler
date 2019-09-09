@@ -5,6 +5,7 @@ import time
 import os
 
 # __all__ = ["XHandler", "Message"]
+
 def info(zzz):
     pid = os.getpid()
     print(f'pid: {pid}', 1)
@@ -133,7 +134,7 @@ class XHandler():
         '''
 
         if sync_task:
-            # TODO support for other type of 
+            # TODO support for other type
             if args_parse == 'map':
                  self.pool.map(func, args, chunksize)
             elif args_parse == 'imap':
