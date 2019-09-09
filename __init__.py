@@ -181,7 +181,6 @@ class XHandler():
         if msg.future_wait:
             self.waiting_in_queue.add(msg.identifier)
         self.queue.put(msg)
-        # print('posted')
         self.lock_for_queue.release()
         # self.pool.map_async(func, args, chunksize=chunksize, callback=callback, error_callback=error_callback)
 
@@ -258,14 +257,12 @@ class XHandler():
 
         if msg.msg_type == Message.TYPE_APPLY:
             result = self.pool.apply_async(msg.func, msg.args, msg.kwds, msg.callback, msg.error_callback)
-            # print('getting result...1', os.getpid())
             # result.get()
             if msg.future_wait:
                 self.waiting_results[msg.identifier] = result
         elif msg.msg_type == Message.TYPE_MAP:
             async_method = self._get_map_method(msg.args_parse)
             result = async_method(msg.func, msg.args, msg.chunksize, msg.callback, msg.error_callback)
-            # print('getting result...')
             if msg.future_wait:
                 self.waiting_results[msg.identifier] = result
             # if msg.args_parse == 'map':
